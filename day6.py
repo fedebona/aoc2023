@@ -21,6 +21,7 @@ def day6_2(f):
     time = int(time.replace(" ", ""))
     duration = duration.split(":")[1]
     duration = int(duration.replace(" ", ""))   
+    #calculate with brute force. It could be the resolution of a quadratic equation t*i-i^2 -duration = 0, find the integers in between zeros
     return len([d for d in calculate_distance(time) if d > duration])
 
 def calculate_distance(t):
