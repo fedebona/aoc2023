@@ -62,98 +62,45 @@ def p(map):
         iterations += 1
     #print(iterations)
 
-    #TODO
+    #Parte 2
+    # prima mettere a 0 i vuoti che partono dai bordi e svuoto i tile che non sono parte del main loop
     clean_map(map, main_loop)
     clean_map(map, main_loop)
-    # prima mettere a empty tutti i tile che non sono parte del main loop
-    # poi fare trim e cercare una sequenza dispari
-    tiles =  find_tiles(map, main_loop)
-    tiles = tiles.union(find_tiles_reverse(map, main_loop))
-    tiles = tiles.union(find_tiles_top(map, main_loop))
-    tiles = tiles.union(find_tiles_top_reverse(map, main_loop))
-    irradiate_found(map)
 
+
+     # poi marco a I i tile interni, che hanno un numero dispari di tagli
+    for y in range(len(map)):
+        for x in range(len(map[y])):
+            if(map[y][x] == "."):
+                mark_empty_tile(map, Point(x, y))
+    irradiate_found(map)
     return {"p1": iterations//2, "p2": count_symbols(map, "I")}
 
-def find_tiles(map, main_loop):
-    found_tiles = set()
-    for y in range(0, len(map)):
-        count = 0
-        is_tile = False
-        for x in range(0, len(map[y])):
-            if map[y][x] == "0"  or map[y][x] == "-":
-                continue         
-            if (Point(x,y) in main_loop):
-                is_tile = False
-                count += 1
-            else:
-                if(is_tile or not count % 2 == 0):
-                    is_tile = True
-                    #print(f'{x},{y} is tile  (value: {map[y][x]})')
-                    change_map_value(map, Point(x, y), "I")
-                    found_tiles.add(Point(x,y))
-    #print(found_tiles)
-    return found_tiles
-
-def find_tiles_reverse(map, main_loop):
-    found_tiles = set()
-    for y in range(0, len(map)):
-        count = 0
-        is_tile = False     
-        for x in reversed(range(0, len(map[y]))):
-            if map[y][x] == "0" or map[y][x] == "-":            
-                continue
-            if (Point(x,y) in main_loop):
-                is_tile = False
-                count += 1
-            else:              
-                if(is_tile or not count % 2 == 0):
-                    is_tile = True
-                    #print(f'{x},{y} is tile  (value: {map[y][x]})')
-                    change_map_value(map, Point(x, y), "I")
-                    found_tiles.add(Point(x,y))
-    #print(found_tiles)
-    return found_tiles
-
-def find_tiles_top(map, main_loop):
-    found_tiles = set()
-    for x in range(0, len(map[0])):
-        count = 0
-        is_tile = False       
-        for y in range(0, len(map)):
-            if map[y][x] == "0" or map[y][x] == "|":             
-                continue
-            if (Point(x,y) in main_loop):
-                is_tile = False
-                count += 1               
-            else:               
-                if(is_tile or not count % 2 == 0):
-                    is_tile = True
-                    #print(f'{x},{y} is tile  (value: {map[y][x]})')
-                    change_map_value(map, Point(x, y), "I")
-                    found_tiles.add(Point(x,y))
-    #print(found_tiles)
-    return found_tiles
-
-def find_tiles_top_reverse(map, main_loop):
-    found_tiles = set()
-    for x in range(0, len(map[0])):
-        count = 0
-        is_tile = False       
-        for y in reversed(range(0, len(map))):
-            if map[y][x] == "0" or map[y][x] == "|":
-                continue
-            if (Point(x,y) in main_loop):
-                is_tile = False
-                count += 1       
-            else:               
-                if(is_tile or not count % 2 == 0):
-                    is_tile = True
-                    #print(f'{x},{y} is tile  (value: {map[y][x]})')
-                    change_map_value(map, Point(x, y), "I")
-                    found_tiles.add(Point(x,y))
-    #print(found_tiles)
-    return found_tiles
+def mark_empty_tile(map, p):
+    #East
+    sublist= map[p.y][p.x:len(map[p.y])]
+    cuts = sublist.count("L") - sublist.count("J") + sublist.count("S") + sublist.count("F") - sublist.count("7")  + sublist.count("|")
+    if(cuts % 2 != 0):
+        change_map_value(map, p, "I")
+        return
+    #West
+    sublist= map[p.y][0:p.x]
+    cuts = - sublist.count("L") + sublist.count("J") + sublist.count("S") - sublist.count("F") + sublist.count("7")  + sublist.count("|")
+    if(cuts % 2 != 0):
+        change_map_value(map, p, "I")  
+        return
+    #North
+    sublist = [row[p.x] for row in map[0:p.y]]
+    cuts = + sublist.count("L") - sublist.count("F") + sublist.count("S") + sublist.count("J") - sublist.count("7")  + sublist.count("-") 
+    if(cuts % 2 != 0):
+        change_map_value(map, p, "I")  
+        return  
+    #South
+    sublist = [row[p.x] for row in map[p.y:len(map)]]
+    cuts = - sublist.count("L") + sublist.count("F") + sublist.count("S") - sublist.count("J") + sublist.count("7") + sublist.count("-")
+    if(cuts % 2 != 0):
+        change_map_value(map, p, "I")  
+        return
 
 def irradiate_found(map):
     need_loop = True
@@ -201,7 +148,7 @@ def clean_map(map, main_loop):
         if(map[0][x] in [".", "0"]):
             change_map_value(map, Point(x, 0), "0")
             y = 1
-            while(y<len(map[0]) ):
+            while(y<len(map) -1):
                 if(map[y][x] in [".", "0"] and map[y-1][x] == "0"):
                     change_map_value(map, Point(x, y), "0")
                 y += 1
