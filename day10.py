@@ -79,25 +79,25 @@ def p(map):
 def mark_empty_tile(map, p):
     #East
     sublist= map[p.y][p.x:len(map[p.y])]
-    cuts = sublist.count("L") - sublist.count("J") + sublist.count("S") + sublist.count("F") - sublist.count("7")  + sublist.count("|")
+    cuts = min(sublist.count("L") , sublist.count("J"))%2  + min(sublist.count("F") , sublist.count("7"))%2  + sublist.count("|")
     if(cuts % 2 != 0):
         change_map_value(map, p, "I")
         return
     #West
     sublist= map[p.y][0:p.x]
-    cuts = - sublist.count("L") + sublist.count("J") + sublist.count("S") - sublist.count("F") + sublist.count("7")  + sublist.count("|")
+    cuts =  min(sublist.count("L") , sublist.count("J"))%2 + min(sublist.count("L") , sublist.count("J"))%2  + sublist.count("|")
     if(cuts % 2 != 0):
         change_map_value(map, p, "I")  
         return
     #North
     sublist = [row[p.x] for row in map[0:p.y]]
-    cuts = + sublist.count("L") - sublist.count("F") + sublist.count("S") + sublist.count("J") - sublist.count("7")  + sublist.count("-") 
+    cuts = min(sublist.count("F") , sublist.count(""))%2  + sublist.count("S") + min(sublist.count("7") , sublist.count("J"))%2  + sublist.count("-") 
     if(cuts % 2 != 0):
         change_map_value(map, p, "I")  
         return  
     #South
     sublist = [row[p.x] for row in map[p.y:len(map)]]
-    cuts = - sublist.count("L") + sublist.count("F") + sublist.count("S") - sublist.count("J") + sublist.count("7") + sublist.count("-")
+    cuts = - min(sublist.count("F") , sublist.count(""))%2  + sublist.count("S") + min(sublist.count("7") , sublist.count("J"))%2  + sublist.count("-")
     if(cuts % 2 != 0):
         change_map_value(map, p, "I")  
         return
