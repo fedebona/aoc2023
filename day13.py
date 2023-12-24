@@ -5,12 +5,10 @@ def p1(maps):
     current = []
     for i in range(len(maps)):
         #print(maps[i])
-        if (i % 2 == 0):
-            current.append(find_simmetry(transpose_matrix(maps[i]), True))
-        else:
-            current.append(find_simmetry(maps[i]) * 100)
+        current.append(find_simmetry(transpose_matrix(maps[i]), True))
+        current.append(find_simmetry(maps[i]) * 100)
 
-    print(current)
+    #print(current)
 
     return sum(current)
 
@@ -32,7 +30,8 @@ def find_simmetry(map, reverse=False):
             count += 1
             if (p+count == len(map) or p-1-count == -1):
                 break
-        if (count != 0):
+        if (count != 0) and (p+count == len(map) or p-1-count == -1):
+
             found += [p]
             sim_len += [count]
             break
